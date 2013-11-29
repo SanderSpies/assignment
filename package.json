@@ -7,6 +7,10 @@
     "distance",
     "point of interest"
   ],
+  "dependencies": {
+    "superagent": "0.15.7",
+    "promise": "3.2.0"
+  },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-cli": "~0.1.9",

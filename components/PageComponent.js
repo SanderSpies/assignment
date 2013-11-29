@@ -2,33 +2,21 @@
 
 var DistanceCalculatorComponent = require('./DistanceCalculatorComponent');
 
-var distanceCalculatorComponent;
-
 /**
- * There can only be one. Page, that is.
- *
+ * Starting point of the application, not much happening here
  */
 var PageComponent = {
 
+  /**
+   * Starting point for the page
+   */
   initialize: function() {
-    var container = document.body;
 
     // distance component
-    distanceCalculatorComponent = new DistanceCalculatorComponent({container: document.getElementById('DistanceCalculator')});
-    // distanceCalculatorComponent.on('calculateDistance', _onCalculateDestinationClick.bind(this));
-    // distanceCalculatorComponent.on('calculateDistance', _onCalculateDestinationClick.bind(this));
+    new DistanceCalculatorComponent({container: document.getElementById('DistanceCalculator')});
   }
 
 };
-
-function _onCalculateDestinationClick() {
-  // set stuff on the distance calculator
-}
-
-function _onHistoryItemClick() {
-  // perform magic
-}
-
 
 PageComponent.initialize();
 
