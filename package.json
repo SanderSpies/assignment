@@ -1,0 +1,17 @@
+{
+  "name": "distancecalculator",
+  "author": "Sander Spies",
+  "description": "Distance calculator for the eBuddy assignment",
+  "version": "0.1.0",
+  "keywords":[
+    "distance",
+    "point of interest"
+  ],
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-cli": "~0.1.9",
+    "grunt-browserify": "~1.2.11",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-sass": "~0.5.1"
+  }
+}
