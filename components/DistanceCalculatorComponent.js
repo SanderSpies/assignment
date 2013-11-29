@@ -1,103 +1,116 @@
 'use strict';
 
+// dependencies
 var LocationService = require('../services/LocationService');
 var calculateDistance = require('../external/calculateDistance');
 
+// constructor
 var DistanceCalculatorComponent = function DistanceCalculatorComponent(options) {
-  this.initialize(options);
+  console.assert(options && options.container && options.container instanceof HTMLElement,
+    'An options:{container:HTMLElement} parameter is required');
+
+  var container = options.container;
+
+  // references to elements
+  originDiv = container.getElementsByClassName('DistanceCalculator-origin')[0];
+  destinationInput = container.getElementsByClassName('DistanceCalculator-destination-input')[0];
+  distanceDiv = container.getElementsByClassName('DistanceCalculator-result')[0];
+  calculateDistanceButton = container.getElementsByClassName('DistanceCalculator-button')[0];
+  historyDiv = container.getElementsByClassName('DistanceCalculator-history')[0];
+
+  // listen to the click event
+  calculateDistanceButton.addEventListener('click', _onCalculateDestinationClick.bind(this));
+
+  // retrieve the user's current location using the geolocation api
+  navigator.geolocation.getCurrentPosition(_onGeographyCoordinatesLoaded.bind(this));
 };
 
-var eventListeners = {};
-var locationInput;
-var resultDiv;
-var searchButton;
+var destinationInput;
+var distanceDiv;
+var calculateDistanceButton;
 var historyDiv;
 var originDiv;
-var originCoords;
-var destinationCoords;
+var originCoordinates;
+var destinationCoordinates;
 
-DistanceCalculatorComponent.prototype = {
-
-  initialize: function(options) {
-    var container = options.container;
-
-    originDiv = container.getElementsByClassName('DistanceCalculator-origin')[0];
-    locationInput = container.getElementsByClassName('DistanceCalculator-destination-input')[0];
-    resultDiv = container.getElementsByClassName('DistanceCalculator-result')[0];
-    searchButton = container.getElementsByClassName('DistanceCalculator-button')[0];
-    historyDiv = container.getElementsByClassName('DistanceCalculator-history')[0];
-
-    searchButton.addEventListener('click', _onCalculateDestinationClick.bind(this));
-
-    navigator.geolocation.getCurrentPosition(_onGeographyCoordinatesLoaded.bind(this));
-  },
-
-  /**
-   * Simple event mechanism
-   */
-  on: function(eventName, callBack) {
-    if(!eventListeners[eventName]) {
-      eventListeners[eventName] = []
-    }
-
-    eventListeners[eventName].push(callBack);
-  },
-
-  /**
-   * Set the origin location
-   *
-   * @param location
-   */
-  setOriginLocation: function (location) {
-    originDiv.innerHTML = location;
-  },
-
-  setResultText: function (result) {
-    resultDiv.innerHTML = result;
-  }
-
-};
-
-function _trigger (eventName, options) {
-  var callbacks = eventListeners[eventName];
-  for(var i = 0, l = callbacks.length; i < l; i++) {
-    callbacks[i].call(null, options);
-  }
-}
-
+/**
+ * Handles the geography coordinates loaded event, and loads the location that belongs to the coordinates
+ *
+ * @param options
+ * @private
+ */
 function _onGeographyCoordinatesLoaded(options) {
+  console.assert(options && options.coords, 'An options:{coords:{}} parameter is required');
 
-  originCoords = options.coords;
+  originCoordinates = options.coords;
 
   var self = this;
-  LocationService.getLocationByCoords(options.coords).then(
+  LocationService.getLocationByCoordinates(originCoordinates).then(
     function onResolve(formattedAddress){
-      self.setOriginLocation(formattedAddress);
+      _setOriginLocation(formattedAddress);
     },
-    function onReject() {
-      console.log('Show error message here');
+    function onReject(msg) {
+      alert(msg);
     }
   );
 }
 
-function _onCalculateDestinationClick(options) {
+/**
+ * Calculate the distance between the origin and destination
+ *
+ * @param options
+ * @private
+ */
+function _onCalculateDestinationClick() {
   var self = this;
-  LocationService.getLocationByAddress(locationInput.value).then(
+  LocationService.getCoordinatesByLocation(destinationInput.value).then(
     function onResolve(res){
-      destinationCoords = res;
-
-      self.setResultText(calculateDistance(originCoords.latitude, originCoords.longitude,
-        destinationCoords.lat, destinationCoords.lng))
+      destinationCoordinates = res;
+      _setResultText(
+        calculateDistance(
+          originCoordinates.latitude,
+          originCoordinates.longitude,
+          destinationCoordinates.lat,
+          destinationCoordinates.lng
+        )
+      );
     },
-    function onReject(){
-      console.log('oh noes!');
+    function onReject(msg){
+      alert(msg);
     }
   );
-  // set stuff on the distance calculator
 }
 
+/**
+ * Set the input field to the history item, and 'press' the button for the user
+ *
+ * @private
+ */
 function _onHistoryItemClick() {
-  // perform magic
+
+}
+
+/**
+ * Set the origin location
+ *
+ * @param location
+ */
+function _setOriginLocation(location) {
+  console.assert(location && typeof location === 'string', 'A location:string parameter is required');
+
+  originDiv.innerHTML = location;
+}
+
+/**
+ * Set the distance text
+ *
+ * @param result
+ * @private
+ */
+function _setResultText(result) {
+  console.assert(result && typeof result === 'number', 'A result:number parameter is required');
+
+  distanceDiv.innerHTML = Math.round(result) + "km";
 }
 
 module.exports = DistanceCalculatorComponent;

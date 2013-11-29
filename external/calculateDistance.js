@@ -1,6 +1,7 @@
 /**
  *
  * Taken from
+ *
  * http://stackoverflow.com/questions/27928/how-do-i-calculate-distance-between-two-latitude-longitude-points
  *
  **/
