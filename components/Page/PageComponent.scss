@@ -1,0 +1,9 @@
+body {
+  background-color: #A4E4AF;
+  font-family: Helvetica Neue, Helvetica, Arial;
+  text-align: center;
+  color: #273829;
+}
+
+@import '../DistanceCalculator/DistanceCalculatorComponent';
+@import '../DistanceHistorySearch/DistanceHistorySearchComponent';

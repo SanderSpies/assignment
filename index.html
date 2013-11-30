@@ -1,33 +1,43 @@
 <!DOCTYPE html "hello eBuddy!">
 <html>
-    <head>
-        <title>Distance Calculator</title>
-        <link href="build/development.css" type="text/css" rel="stylesheet"/>
-        <meta name="viewport" content="width=device-width">
-    </head>
-    <body>
-        <h1>Distance Calculator</h1>
-        <div id="DistanceCalculator">
-            <p>
-                Distance between
-            </p>
-            <p class="DistanceCalculator-origin">
-                ...
-            </p>
-            <p>
-                and
-            </p>
-            <input type="text" placeholder="a point of interest" class="DistanceCalculator-destination-input" />
-            <p>
-                <input type="button" class="DistanceCalculator-button" autocomplete="on" value="=" />
-            </p>
-            <div class="DistanceCalculator-result">
+<head>
+    <title>Distance Calculator</title>
+    <link href="build/development.css" type="text/css" rel="stylesheet"/>
+    <meta name="viewport" content="width=device-width">
+</head>
+<body>
+<h1>Distance Calculator</h1>
 
-            </div>
-            <div class="DistanceCalculator-history">
+<div id="DistanceCalculator">
+    <p>
+        Distance between
+    </p>
 
-            </div>
-        </div>
-        <script src="build/development.js" type="text/javascript"></script>
-    </body>
+    <p class="DistanceCalculator-origin">
+        ...
+    </p>
+
+    <p>
+        and
+    </p>
+    <input type="text" placeholder="a point of interest" class="DistanceCalculator-destination-input"/>
+
+    <p>
+        <input type="button" class="DistanceCalculator-button" autocomplete="on" value="="/>
+    </p>
+
+    <div class="DistanceCalculator-result">
+
+    </div>
+</div>
+<div id="DistanceHistorySearch">
+    <h2>History</h2>
+    <input type="search" placeholder="Enter a previous location..." class="DistanceHistorySearch-search-input"/>
+    <ul class="DistanceHistorySearch-search-results">
+
+    </ul>
+</div>
+
+<script src="build/development.js" type="text/javascript"></script>
+</body>
 </html>

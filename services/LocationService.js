@@ -100,7 +100,22 @@ var LocationService = {
           }
         });
     });
+  },
+
+  /**
+   * Find location in cache
+   *
+   * @param searchTxt
+   * @returns {Array}
+   */
+  findLocationsInCache: function (searchTxt) {
+    var cachedLocations = Object.keys(cache);
+
+    return cachedLocations.filter(function(location){
+      return location.indexOf(searchTxt) > -1;
+    });
   }
+
 };
 
 module.exports = LocationService;

@@ -1,10 +1,15 @@
 'use strict';
 
 // dependencies
-var LocationService = require('../services/LocationService');
-var calculateDistance = require('../external/calculateDistance');
+var LocationService = require('../../services/LocationService');
+var calculateDistance = require('../../external/calculateDistance');
 
-// constructor
+/**
+ * Component that tells the difference between the user's location and a point of interest.
+ *
+ * @param options
+ * @constructor
+ */
 var DistanceCalculatorComponent = function DistanceCalculatorComponent(options) {
   console.assert(options && options.container && options.container instanceof HTMLElement,
     'An options:{container:HTMLElement} parameter is required');
@@ -15,23 +20,34 @@ var DistanceCalculatorComponent = function DistanceCalculatorComponent(options) 
   originDiv = container.getElementsByClassName('DistanceCalculator-origin')[0];
   destinationInput = container.getElementsByClassName('DistanceCalculator-destination-input')[0];
   distanceDiv = container.getElementsByClassName('DistanceCalculator-result')[0];
-  calculateDistanceButton = container.getElementsByClassName('DistanceCalculator-button')[0];
-  historyDiv = container.getElementsByClassName('DistanceCalculator-history')[0];
+  var calculateDistanceButton = container.getElementsByClassName('DistanceCalculator-button')[0];
 
   // listen to the click event
-  calculateDistanceButton.addEventListener('click', _onCalculateDestinationClick.bind(this));
+  calculateDistanceButton.addEventListener('click', _onCalculateDistanceButtonClick);
 
-  // retrieve the user's current location using the geolocation api
-  navigator.geolocation.getCurrentPosition(_onGeographyCoordinatesLoaded.bind(this));
+  // retrieve the user's current location using the geolocation api (could be abstracted away nicer)
+  navigator.geolocation.getCurrentPosition(_onCurrentPositionLoaded, _onCurrentPositionLoadError);
 };
 
+// we are not afraid of hoisting
 var destinationInput;
 var distanceDiv;
-var calculateDistanceButton;
-var historyDiv;
 var originDiv;
 var originCoordinates;
 var destinationCoordinates;
+
+// constants
+var CURRENT_POSITION_ERROR_MSG = 'Could not retrieve your current position.';
+
+// public
+DistanceCalculatorComponent.prototype = {
+  calculateLocationDistanceFor: function (location) {
+    destinationInput.value = location;
+    _calculateDistance(location);
+  }
+};
+
+// private functions
 
 /**
  * Handles the geography coordinates loaded event, and loads the location that belongs to the coordinates
@@ -39,14 +55,13 @@ var destinationCoordinates;
  * @param options
  * @private
  */
-function _onGeographyCoordinatesLoaded(options) {
+function _onCurrentPositionLoaded(options) {
   console.assert(options && options.coords, 'An options:{coords:{}} parameter is required');
 
   originCoordinates = options.coords;
 
-  var self = this;
   LocationService.getLocationByCoordinates(originCoordinates).then(
-    function onResolve(formattedAddress){
+    function onResolve(formattedAddress) {
       _setOriginLocation(formattedAddress);
     },
     function onReject(msg) {
@@ -56,16 +71,27 @@ function _onGeographyCoordinatesLoaded(options) {
 }
 
 /**
- * Calculate the distance between the origin and destination
+ * In the case when the current position is not retrieved
  *
- * @param options
  * @private
  */
-function _onCalculateDestinationClick() {
-  var self = this;
-  LocationService.getCoordinatesByLocation(destinationInput.value).then(
-    function onResolve(res){
-      destinationCoordinates = res;
+function _onCurrentPositionLoadError() {
+  alert(CURRENT_POSITION_ERROR_MSG);
+}
+
+function _onCalculateDistanceButtonClick() {
+  _calculateDistance(destinationInput.value);
+}
+
+/**
+ * Calculate the distance between the users current location and the point of interest
+ *
+ * @private
+ */
+function _calculateDistance(pointOfInterest) {
+  LocationService.getCoordinatesByLocation(pointOfInterest).then(
+    function onResolve(coordinates) {
+      destinationCoordinates = coordinates;
       _setResultText(
         calculateDistance(
           originCoordinates.latitude,
@@ -75,25 +101,17 @@ function _onCalculateDestinationClick() {
         )
       );
     },
-    function onReject(msg){
+    function onReject(msg) {
       alert(msg);
     }
   );
 }
 
 /**
- * Set the input field to the history item, and 'press' the button for the user
- *
- * @private
- */
-function _onHistoryItemClick() {
-
-}
-
-/**
  * Set the origin location
  *
  * @param location
+ * @private
  */
 function _setOriginLocation(location) {
   console.assert(location && typeof location === 'string', 'A location:string parameter is required');

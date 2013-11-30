@@ -3,8 +3,9 @@ module.exports = function (grunt) {
     browserify: {
       default: {
         src: [
-          'components/*.js',
-          'services/*.js'
+          'components/*/*.js',
+          'services/*.js',
+          'external/*.js'
         ],
         dest: 'build/development.js'
       }
@@ -12,15 +13,15 @@ module.exports = function (grunt) {
     sass: {
       dist: {
         files: {
-          'build/development.css': 'components/PageComponent.scss'
+          'build/development.css': 'components/Page/PageComponent.scss'
         }
       }
     },
     watch: {
       files: [
-        'components/*.js',
+        'components/*/*.js',
         'services/*.js',
-        'components/*.scss'
+        'components/*/*.scss'
       ],
       tasks: [
         'browserify',
@@ -34,4 +35,4 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
 
   grunt.registerTask('default', ['browserify']);
-}
+};

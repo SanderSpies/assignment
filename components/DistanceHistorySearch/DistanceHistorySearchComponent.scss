@@ -1,0 +1,18 @@
+#DistanceHistorySearch {
+  margin-top: 20px;
+  background-color: white;
+  border: solid 4px #0d2169;
+  width: 400px;
+  margin: 20px auto;
+  border-radius: 10;
+  padding: 10px;
+}
+
+.DistanceHistorySearch-search-results {
+  list-style: none;
+  padding-left: 0;
+}
+
+.DistanceHistorySearch-search-result {
+  cursor: pointer;
+}
